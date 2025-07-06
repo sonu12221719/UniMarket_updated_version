@@ -1,6 +1,6 @@
-import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 import { sendOtp } from '../utils/emailService.js';
 
 //function to generate otp
@@ -103,7 +103,7 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "1d" }
     );
 
     res.status(200).json({
@@ -118,5 +118,23 @@ export const loginUser = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+
+// Get current user
+export const getCurrentUser = async (req, res) => {
+  // req.user is set by your protect middleware after verifying the token
+  res.json({ user: req.user });
+};
+
+// Logout user (optional - for server-side logout tracking)
+export const logoutUser = async (req, res) => {
+  try {
+    // In a stateless JWT system, the client handles logout by removing the token
+    // This endpoint can be used for logging logout events or invalidating tokens in a blacklist
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
